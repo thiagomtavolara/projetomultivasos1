@@ -61,3 +61,4 @@ if __name__ == "__main__":
 
     # roda a aplicação
     app.run_server(debug=True, host=host, dev_tools_ui=True)
+

@@ -16,22 +16,59 @@ from IPython.display import display, clear_output #utilizado para atualização 
 #import mtxlab
 import warnings
 warnings.filterwarnings('ignore')
+#%matplotlib inline
 
+# Importe o objeto app da sua aplicação Dash
+from app import app
 
-p0inicial = 1324
-p1inicial = 295
-p2inicial = 201
-p3inicial = 0
+# Acesse o armazenamento de dados da sua aplicação Dash
+data_store = app.layout['data-store']
 
-t0min, t0max = "80-126".split("-") #t0min é a temperatura que da inicio ao funcionamento do controle
-t1min, t1max = "90-94".split("-")
-t2min, t2max = "80-90".split("-")
-t3min, t3max = "76-80".split("-")
+# Recupere os valores armazenados
+valores = data_store.data
 
-t0_sp = (int(t0max) + int(t0min))/2
-t1_sp = (int(t1max) + int(t1min))/2
-t2_sp = (int(t2max) + int(t2min))/2
-t3_sp = (int(t3max) + int(t3min))/2
+# Agora, você pode acessar os valores individualmente
+p0_inicial = valores['p0_inicial']
+p1_inicial = valores['p1_inicial']
+p2_inicial = valores['p2_inicial']
+p3_inicial = valores['p3_inicial']
+t0_min = valores['t0_min']
+t0_max = valores['t0_max']
+t1_min = valores['t1_min']
+t1_max = valores['t1_max']
+t2_min = valores['t2_min']
+t2_max = valores['t2_max']
+t3_min = valores['t3_min']
+t3_max = valores['t3_max']
+
+# Agora você pode usar esses valores como desejar em seu outro código
+print("P0 Inicial:", p0_inicial)
+print("P1 Inicial:", p1_inicial)
+print("P2 Inicial:", p2_inicial)
+print("P3 Inicial:", p3_inicial)
+print("T0 Mínimo:", t0_min)
+print("T0 Máximo:", t0_max)
+print("T1 Mínimo:", t1_min)
+print("T1 Máximo:", t1_max)
+print("T2 Mínimo:", t2_min)
+print("T2 Máximo:", t2_max)
+print("T3 Mínimo:", t3_min)
+print("T3 Máximo:", t3_max)
+
+#p0inicial = 1324
+#p1inicial = 295
+#p2inicial = 201
+#p3inicial = 0
+
+#t0min, t0max = "80-126".split("-") #t0min é a temperatura que da inicio ao funcionamento do controle
+#t1min, t1max = "90-94".split("-")
+#t2min, t2max = "80-90".split("-")
+#t3min, t3max = "76-80".split("-")
+
+t0_sp = (int(t0_max) + int(t0_min))/2
+t1_sp = (int(t1_max) + int(t1_min))/2
+t2_sp = (int(t2_max) + int(t2_min))/2
+t3_sp = (int(t3_max) + int(t3_min))/2
 
 muda_sp = True  #Se "=True" a função de mudar o set-point estará ativada, para desativar "=False"
 quanto = 5  #Quantos graus vão ser alterados do set-point inicial, para diminuir basta utilizar valor negativo
@@ -175,16 +212,16 @@ def leitura():
 
 
     if(len(messagepesos.split())>8):#message.split é a mensagem separada a cada espaço, assim se separa palavra por palavra
-        p0= (float(messagepesos.split()[1+tamanhomensagemsplit])*1000) + p0inicial
+        p0= (float(messagepesos.split()[1+tamanhomensagemsplit])*1000) + p0_inicial
         print(messagepesos.split()[0+tamanhomensagemsplit],"%.0f"%p0)
         P0[medidas]=float(p0)
-        p1= (float(messagepesos.split()[3+tamanhomensagemsplit])*1000) + p1inicial
+        p1= (float(messagepesos.split()[3+tamanhomensagemsplit])*1000) + p1_inicial
         print(messagepesos.split()[2+tamanhomensagemsplit],"%.0f"%p1)
         P1[medidas]=float(p1)
-        p2= (float(messagepesos.split()[5+tamanhomensagemsplit])*1000) + p2inicial
+        p2= (float(messagepesos.split()[5+tamanhomensagemsplit])*1000) + p2_inicial
         print(messagepesos.split()[4+tamanhomensagemsplit],"%.0f"%p2)
         P2[medidas]=float(p2)
-        p3= (float(messagepesos.split()[7+tamanhomensagemsplit])*1000) + p3inicial
+        p3= (float(messagepesos.split()[7+tamanhomensagemsplit])*1000) + p3_inicial
         print(messagepesos.split()[6+tamanhomensagemsplit],"%.0f"%p3)
         P3[medidas]=float(p3)
         mensagemusadapesos=np.delete(messagepesos.split(),8)#mensagem em forma de matriz
@@ -241,7 +278,7 @@ def leitura():
             if (i==Temperatura3):
                 dT3=1
 
-        if ((T0[medidas - 1] > int(t0min)) or (primeiravez0)) and (Tempo_final > tempo) and (medidas % 2 == 0):
+        if ((T0[medidas - 1] > int(t0_min)) or (primeiravez0)) and (Tempo_final > tempo) and (medidas % 2 == 0):
             primeiravez0 = True
             if tb1 < tempo:
                 vazaobomba("B1",0)

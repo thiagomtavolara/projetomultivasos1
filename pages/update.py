@@ -1,68 +1,91 @@
-    # importa biblitecas gerais
+import os
 from dash import dcc, html, Input, Output, State, callback, MATCH, ALL
 import dash
 import dash_bootstrap_components as dbc
 
 # importa bibliotecas próprias
 from utils import graficos
-from assets.style .style import *
+from assets.style.style import *
 
 # Obrigatório! Adiciona a página na aplicação. Mudar o nome e o caminho para a página
 dash.register_page(__name__, path='/update', title='Update')
 
+# Cards bootstrap - elementos básicos da página
 
-#%% Cards bootstrap - elementos básicos da página
-
-# gráfico simple
+# gráfico simples
 layout_grafico_atualizado = dbc.Card([
     # título do card
     dbc.CardHeader("Gráfico atualizado".upper()),
-    # coporto do card - aqui podemos adiciar qualquer elemento HTML
+    # corpo do card - aqui podemos adicionar qualquer elemento HTML
     dbc.CardBody([
-            dcc.Graph(id="grafico_atualizado", figure={}),
-        ])
-    ],
-)
+        dcc.Graph(id="grafico_atualizado", figure={}),
+    ])
+])
 
+# layout para solicitar informações ao usuário
 layout_configuracoes = dbc.Card([
     dbc.CardHeader("Configurações".upper()),
     dbc.CardBody([
-
-        # inicia fomulário
+        # inicia formulário
         dbc.Form([
-
-                html.Div(
-                    [
-                    dbc.Checkbox(id="checkbox-dados-atuais", 
-                        value=True, 
-                        label="Atualizar em Tempo Real"),
-                    ],
-                    # adiciona margem abaixo
-                    className="mb-3",
-                ),
-
-
-                html.Div(
-                    [
-                        dbc.Label("Número de pontos plotados", html_for="variaveis"),
-                        dbc.Input(id="input-num-pontos", 
-                                value=100, 
-                                type="number", 
-                                placeholder="Número de Pontos", 
-                                min=10, 
-                                step=1),
-                                ],
-                    # adiciona margem abaixo
-                    className="mb-3",
-                ),
-
+            html.Div([
+                dbc.Label("P0 Inicial"),
+                dbc.Input(id="input-p0-inicial", type="number", placeholder="P0 Inicial"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("P1 Inicial"),
+                dbc.Input(id="input-p1-inicial", type="number", placeholder="P1 Inicial"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("P2 Inicial"),
+                dbc.Input(id="input-p2-inicial", type="number", placeholder="P2 Inicial"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("P3 Inicial"),
+                dbc.Input(id="input-p3-inicial", type="number", placeholder="P3 Inicial"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T0 Mínimo"),
+                dbc.Input(id="input-t0-minimo", type="number", placeholder="T0 Mínimo"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T0 Máximo"),
+                dbc.Input(id="input-t0-maximo", type="number", placeholder="T0 Máximo"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T1 Mínimo"),
+                dbc.Input(id="input-t1-minimo", type="number", placeholder="T1 Mínimo"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T1 Máximo"),
+                dbc.Input(id="input-t1-maximo", type="number", placeholder="T1 Máximo"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T2 Mínimo"),
+                dbc.Input(id="input-t2-minimo", type="number", placeholder="T2 Mínimo"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T2 Máximo"),
+                dbc.Input(id="input-t2-maximo", type="number", placeholder="T2 Máximo"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T3 Mínimo"),
+                dbc.Input(id="input-t3-minimo", type="number", placeholder="T3 Mínimo"),
+            ], className="mb-3"),
+            html.Div([
+                dbc.Label("T3 Máximo"),
+                dbc.Input(id="input-t3-maximo", type="number", placeholder="T3 Máximo"),
+            ], className="mb-3"),
+            # Botão de aplicar
+            html.Div([
+                dbc.Button("Aplicar", id="btn-aplicar", color="primary", className="mr-1"),
+            ], className="mb-3")
         ])
     ])
 ])
 
-#%% Layout - organiza os cards na página
-layout = dbc.Container(
-    [
+# Layout - organiza os cards na página
+layout = dbc.Container([
     # elemento responsável pela atualização do dash em tempo real
     dcc.Interval(
         id="trigger_classe",
@@ -70,52 +93,62 @@ layout = dbc.Container(
         interval=1*1000,  # taxa de atualização em ms
         n_intervals=0,
     ),
-    
-    # adicina uma linha 
-    dbc.Row(
-        [
-            # adiciona uma nova coluna com o gráfico
-            dbc.Col(layout_grafico_atualizado, md=8),
-            # adicionar uma nova coluna com o formulário
-            dbc.Col(layout_configuracoes, md=4),
-        ],
-        style=ROW_STYLE,
-        ),
-    dcc.Store(id='data-store') # Adicionando dcc.Store para armazenar dados
-    ],
-    fluid=True,
-)
 
-#%% Callbacks
-# Callback para atualizar os dados
+    # adiciona uma linha
+    dbc.Row([
+        # adicionar uma nova coluna com o formulário
+        dbc.Col(layout_configuracoes, md=4),
+        # adiciona uma nova coluna com o gráfico
+        dbc.Col(layout_grafico_atualizado, md=8),
+    ]),
+    dcc.Store(id='data-store') # Adicionando dcc.Store para armazenar dados
+], fluid=True)
+
+# Callbacks para criar ou atualizar o arquivo .txt
 @callback(
     Output('data-store', 'data'),
-    Input('trigger_classe', 'n_intervals'),
-    State('data-store', 'data'))
-def update_data(n_intervals, stored_data):
-    if stored_data is None:
-        x, y = graficos.initial_data()  # Obtém dados iniciais
-    else:
-        x, y = stored_data['x'], stored_data['y']
-        x, y = graficos.update_data(x, y)  # Atualiza dados
+    [Input('btn-aplicar', 'n_clicks')],
+    [State('input-p0-inicial', 'value'),
+     State('input-p1-inicial', 'value'),
+     State('input-p2-inicial', 'value'),
+     State('input-p3-inicial', 'value'),
+     State('input-t0-minimo', 'value'),
+     State('input-t0-maximo', 'value'),
+     State('input-t1-minimo', 'value'),
+     State('input-t1-maximo', 'value'),
+     State('input-t2-minimo', 'value'),
+     State('input-t2-maximo', 'value'),
+     State('input-t3-minimo', 'value'),
+     State('input-t3-maximo', 'value')]
+)
+def apply_settings(n_clicks, p0_inicial, p1_inicial, p2_inicial, p3_inicial, t0_min, t0_max, t1_min, t1_max, t2_min, t2_max, t3_min, t3_max):
+    if n_clicks is not None:
+        # Definindo o nome do arquivo
+        filename = "informacoes.txt"
 
-    return {'x': x, 'y': y}
+        # Criando ou atualizando o arquivo
+        with open(filename, "w") as file:
+            file.write(f"P0 Inicial: {p0_inicial}\n")
+            file.write(f"P1 Inicial: {p1_inicial}\n")
+            file.write(f"P2 Inicial: {p2_inicial}\n")
+            file.write(f"P3 Inicial: {p3_inicial}\n")
+            file.write(f"T0 Mínimo: {t0_min}\n")
+            file.write(f"T0 Máximo: {t0_max}\n")
+            file.write(f"T1 Mínimo: {t1_min}\n")
+            file.write(f"T1 Máximo: {t1_max}\n")
+            file.write(f"T2 Mínimo: {t2_min}\n")
+            file.write(f"T2 Máximo: {t2_max}\n")
+            file.write(f"T3 Mínimo: {t3_min}\n")
+            file.write(f"T3 Máximo: {t3_max}\n")
 
+    return {}
 
-# Callback para atualizar o gráfico com base no estado do checkbox
-@callback(
-    Output('grafico_atualizado', 'figure'),
-    [Input('data-store', 'data'), Input('checkbox-dados-atuais', 'value')],
-    [State('input-num-pontos', 'value')])
-def update_graph_with_live_update(data, is_live_update, num_pontos):
-    if data is None or not is_live_update:
-        return dash.no_update
+# Criando a aplicação Dash
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-    x, y = data['x'], data['y']
+# Configurando o layout da página
+app.layout = layout
 
-    # Se a atualização em tempo real não estiver ativa, limita os pontos
-    if num_pontos is not None:
-        x, y = x[-num_pontos:], y[-num_pontos:]
-
-    return graficos.plot_grafico_simples_online(x, y)
-
+# Rodando a aplicação
+if __name__ == '__main__':
+    app.run_server(debug=True)

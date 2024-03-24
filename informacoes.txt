@@ -1,0 +1,12 @@
+P0 Inicial: 77
+P1 Inicial: 55
+P2 Inicial: 777
+P3 Inicial: 555
+T0 Mínimo: 777
+T0 Máximo: 5775
+T1 Mínimo: 7577
+T1 Máximo: 7575
+T2 Mínimo: 7575
+T2 Máximo: None
+T3 Mínimo: None
+T3 Máximo: 5757

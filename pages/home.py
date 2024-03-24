@@ -74,9 +74,6 @@ layout_formulario = dbc.Card([
         ])
     ])
 ])
-
-
-
 # Layout - organiza os cards na página
 layout = dbc.Container(
     [

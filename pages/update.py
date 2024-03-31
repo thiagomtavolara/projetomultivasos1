@@ -1,4 +1,6 @@
 import os
+import subprocess
+
 from dash import dcc, html, Input, Output, State, callback, MATCH, ALL
 import dash
 import dash_bootstrap_components as dbc
@@ -79,6 +81,7 @@ layout_configuracoes = dbc.Card([
             # Botão de aplicar
             html.Div([
                 dbc.Button("Aplicar", id="btn-aplicar", color="primary", className="mr-1"),
+                dbc.Button("Rodar", id="btn-rodar", color="success", className="mr-1"),
             ], className="mb-3")
         ])
     ])
@@ -142,6 +145,27 @@ def apply_settings(n_clicks, p0_inicial, p1_inicial, p2_inicial, p3_inicial, t0_
             file.write(f"T3 Máximo: {t3_max}\n")
 
     return {}
+
+
+# Callback para o botão "Rodar"
+
+@callback(
+    Output('grafico_atualizado', 'figure'),  # Aqui você precisa atualizar o ID do gráfico
+    [Input('btn-rodar', 'n_clicks')],
+    [State('data-store', 'data')]
+)
+def run_simulation(n_clicks, stored_data):
+    if n_clicks is not None:
+        try:
+            # Executar o programa planta.py usando subprocess
+            subprocess.run(["python", "planta.py"])
+        except Exception as e:
+            print("Erro ao executar o programa:", e)
+
+    # Retorne None para indicar que não há atualização no gráfico
+    return None
+
+
 
 # Criando a aplicação Dash
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])

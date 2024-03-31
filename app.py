@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 # instancia a aplicação e define configurações
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], use_pages=True, pages_folder="pages",
     suppress_callback_exceptions=True, assets_folder="assets")
-#oi
+
 # título da aplicação
 app.title = 'multivasos-dashboard'
 

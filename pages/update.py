@@ -28,62 +28,80 @@ layout_grafico_atualizado = dbc.Card([
 layout_configuracoes = dbc.Card([
     dbc.CardHeader("Configurações".upper()),
     dbc.CardBody([
-        # inicia formulário
-        dbc.Form([
-            html.Div([
-                dbc.Label("P0 Inicial"),
-                dbc.Input(id="input-p0-inicial", type="number", placeholder="P0 Inicial"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("P1 Inicial"),
-                dbc.Input(id="input-p1-inicial", type="number", placeholder="P1 Inicial"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("P2 Inicial"),
-                dbc.Input(id="input-p2-inicial", type="number", placeholder="P2 Inicial"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("P3 Inicial"),
-                dbc.Input(id="input-p3-inicial", type="number", placeholder="P3 Inicial"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T0 Mínimo"),
-                dbc.Input(id="input-t0-minimo", type="number", placeholder="T0 Mínimo"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T0 Máximo"),
-                dbc.Input(id="input-t0-maximo", type="number", placeholder="T0 Máximo"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T1 Mínimo"),
-                dbc.Input(id="input-t1-minimo", type="number", placeholder="T1 Mínimo"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T1 Máximo"),
-                dbc.Input(id="input-t1-maximo", type="number", placeholder="T1 Máximo"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T2 Mínimo"),
-                dbc.Input(id="input-t2-minimo", type="number", placeholder="T2 Mínimo"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T2 Máximo"),
-                dbc.Input(id="input-t2-maximo", type="number", placeholder="T2 Máximo"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T3 Mínimo"),
-                dbc.Input(id="input-t3-minimo", type="number", placeholder="T3 Mínimo"),
-            ], className="mb-3"),
-            html.Div([
-                dbc.Label("T3 Máximo"),
-                dbc.Input(id="input-t3-maximo", type="number", placeholder="T3 Máximo"),
-            ], className="mb-3"),
-            # Botão de aplicar
-            html.Div([
-                dbc.Button("Aplicar", id="btn-aplicar", color="primary", className="mr-1"),
-                dbc.Button("Rodar", id="btn-rodar", color="success", className="mr-1"),
-            ], className="mb-3")
-        ])
+        dbc.Row([
+            dbc.Col([
+                # inicia formulário
+                dbc.Form([
+                    html.Div([
+                        dbc.Label("P0 Inicial"),
+                        dbc.Input(id="input-p0-inicial", type="number", placeholder="P0 Inicial"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("P1 Inicial"),
+                        dbc.Input(id="input-p1-inicial", type="number", placeholder="P1 Inicial"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("P2 Inicial"),
+                        dbc.Input(id="input-p2-inicial", type="number", placeholder="P2 Inicial"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("P3 Inicial"),
+                        dbc.Input(id="input-p3-inicial", type="number", placeholder="P3 Inicial"),
+                    ], className="mb-3"),
+                ])
+            ], md=6),
+            dbc.Col([
+                dbc.Form([
+                    html.Div([
+                        dbc.Label("T0 Mínimo"),
+                        dbc.Input(id="input-t0-minimo", type="number", placeholder="T0 Mínimo"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("T0 Máximo"),
+                        dbc.Input(id="input-t0-maximo", type="number", placeholder="T0 Máximo"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("T1 Mínimo"),
+                        dbc.Input(id="input-t1-minimo", type="number", placeholder="T1 Mínimo"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("T1 Máximo"),
+                        dbc.Input(id="input-t1-maximo", type="number", placeholder="T1 Máximo"),
+                    ], className="mb-3"),
+                ])
+            ], md=6),
+        ]),
+        dbc.Row([
+            dbc.Col([
+                dbc.Form([
+                    html.Div([
+                        dbc.Label("T2 Mínimo"),
+                        dbc.Input(id="input-t2-minimo", type="number", placeholder="T2 Mínimo"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("T2 Máximo"),
+                        dbc.Input(id="input-t2-maximo", type="number", placeholder="T2 Máximo"),
+                    ], className="mb-3"),
+                ])
+            ], md=6),
+            dbc.Col([
+                dbc.Form([
+                    html.Div([
+                        dbc.Label("T3 Mínimo"),
+                        dbc.Input(id="input-t3-minimo", type="number", placeholder="T3 Mínimo"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("T3 Máximo"),
+                        dbc.Input(id="input-t3-maximo", type="number", placeholder="T3 Máximo"),
+                    ], className="mb-3"),
+                ])
+            ], md=6),
+        ]),
+        # Botão de aplicar
+        html.Div([
+            dbc.Button("Aplicar", id="btn-aplicar", color="primary", className="mr-1"),
+            dbc.Button("Rodar", id="btn-rodar", color="success", className="mr-1"),
+        ], className="mb-3")
     ])
 ])
 
@@ -99,10 +117,12 @@ layout = dbc.Container([
 
     # adiciona uma linha
     dbc.Row([
+        # adicionar uma nova coluna com o gráfico
+        dbc.Col(layout_grafico_atualizado, md=12),
+    ]),
+    dbc.Row([
         # adicionar uma nova coluna com o formulário
-        dbc.Col(layout_configuracoes, md=4),
-        # adiciona uma nova coluna com o gráfico
-        dbc.Col(layout_grafico_atualizado, md=8),
+        dbc.Col(layout_configuracoes, md=12),
     ]),
     dcc.Store(id='data-store') # Adicionando dcc.Store para armazenar dados
 ], fluid=True)

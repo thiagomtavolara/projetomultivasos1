@@ -27,33 +27,36 @@ data_store = app.layout['data-store']
 # Recupere os valores armazenados
 valores = data_store.data
 
-# Agora, você pode acessar os valores individualmente
-p0_inicial = valores['p0_inicial']
-p1_inicial = valores['p1_inicial']
-p2_inicial = valores['p2_inicial']
-p3_inicial = valores['p3_inicial']
-t0_min = valores['t0_min']
-t0_max = valores['t0_max']
-t1_min = valores['t1_min']
-t1_max = valores['t1_max']
-t2_min = valores['t2_min']
-t2_max = valores['t2_max']
-t3_min = valores['t3_min']
-t3_max = valores['t3_max']
+with open('informacoes.txt', 'r') as arquivo:
+    linhas = arquivo.readlines()
 
-# Agora você pode usar esses valores como desejar em seu outro código
-print("P0 Inicial:", p0_inicial)
-print("P1 Inicial:", p1_inicial)
-print("P2 Inicial:", p2_inicial)
-print("P3 Inicial:", p3_inicial)
-print("T0 Mínimo:", t0_min)
-print("T0 Máximo:", t0_max)
-print("T1 Mínimo:", t1_min)
-print("T1 Máximo:", t1_max)
-print("T2 Mínimo:", t2_min)
-print("T2 Máximo:", t2_max)
-print("T3 Mínimo:", t3_min)
-print("T3 Máximo:", t3_max)
+# Inicialize um dicionário para armazenar os valores lidos do arquivo
+valores_arquivo = {}
+
+# Itere sobre as linhas do arquivo
+for linha in linhas:
+    # Divida a linha em chave e valor, usando ':' como separador
+    chave, valor = linha.strip().split(':')
+    # Remova espaços em branco extras do valor e converta para float
+    chave = chave.strip()
+    valor = int(valor.strip())
+    # Armazene a chave e o valor no dicionário
+    valores_arquivo[chave] = valor
+
+# Atribua os valores do arquivo às variáveis correspondentes
+p0_inicial = valores_arquivo['P0 Inicial']
+p1_inicial = valores_arquivo['P1 Inicial']
+p2_inicial = valores_arquivo['P2 Inicial']
+p3_inicial = valores_arquivo['P3 Inicial']
+t0_min = valores_arquivo['T0 Mínimo']
+t0_max = valores_arquivo['T0 Máximo']
+t1_min = valores_arquivo['T1 Mínimo']
+t1_max = valores_arquivo['T1 Máximo']
+t2_min = valores_arquivo['T2 Mínimo']
+t2_max = valores_arquivo['T2 Máximo']
+t3_min = valores_arquivo['T3 Mínimo']
+t3_max = valores_arquivo['T3 Máximo']
+
 
 #p0inicial = 1324
 #p1inicial = 295

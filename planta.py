@@ -31,17 +31,27 @@ with open('informacoes.txt', 'r') as arquivo:
 # Inicialize um dicionário para armazenar os valores lidos do arquivo
 valores_arquivo = {}
 
-# Itere sobre as linhas do arquivo
 for linha in linhas:
-    # Divida a linha em chave e valor, usando ':' como separador
+    # Divide a linha em chave e valor, usando ':' como separador
     chave, valor = linha.strip().split(':')
-    # Remova espaços em branco extras do valor e converta para float
+    # Remove espaços em branco extras do valor
     chave = chave.strip()
-    valor = int(valor.strip())
-    # Armazene a chave e o valor no dicionário
+    valor = valor.strip()
+    # Verifica se o valor é uma string "True" ou "False" e converte para booleano
+    if valor.lower() == 'true':
+        valor = True
+    elif valor.lower() == 'false':
+        valor = False
+    else:
+        # Tenta converter para inteiro, se não for possível, mantém como string
+        try:
+            valor = int(valor)
+        except ValueError:
+            pass
+    # Armazena chave e o valor no dicionário
     valores_arquivo[chave] = valor
 
-# Atribua os valores do arquivo às variáveis correspondentes
+# Atribue os valores do arquivo às variáveis correspondentes
 p0_inicial = valores_arquivo['P0 Inicial']
 p1_inicial = valores_arquivo['P1 Inicial']
 p2_inicial = valores_arquivo['P2 Inicial']
@@ -54,6 +64,10 @@ t2_min = valores_arquivo['T2 Mínimo']
 t2_max = valores_arquivo['T2 Máximo']
 t3_min = valores_arquivo['T3 Mínimo']
 t3_max = valores_arquivo['T3 Máximo']
+muda_sp = valores_arquivo['Muda SP'] #Se "=True" a função de mudar o set-point estará ativada, para desativar "=False"
+tempo_para_fim = valores_arquivo['TempoParaFim'] #Quantos graus vão ser alterados do set-point inicial, para diminuir basta utilizar valor negativo
+quanto = valores_arquivo['Quanto']  #Quantas medidas devem ser feitas até eu aumentar o set-point
+patamar = valores_arquivo['Patamar'] #Tempo para desligar o sistema após atingir T3 set-point
 
 
 
@@ -62,10 +76,6 @@ t1_sp = (int(t1max) + int(t1min))/2
 t2_sp = (int(t2max) + int(t2min))/2
 t3_sp = (int(t3max) + int(t3min))/2
 
-muda_sp = True  #Se "=True" a função de mudar o set-point estará ativada, para desativar "=False"
-quanto = 5  #Quantos graus vão ser alterados do set-point inicial, para diminuir basta utilizar valor negativo
-patamar = 180  #Quantas medidas devem ser feitas até eu aumentar o set-point
-tempoparafim = 1800 #Tempo para desligar o sistema após atingir T3 set-point
 
 primeiravez0 = False
 primeiravez1 = False

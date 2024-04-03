@@ -48,10 +48,6 @@ layout_configuracoes = dbc.Card([
                         dbc.Label("P3 Inicial"),
                         dbc.Input(id="input-p3-inicial", type="number", placeholder="P3 Inicial"),
                     ], className="mb-3"),
-                ])
-            ], md=6),
-            dbc.Col([
-                dbc.Form([
                     html.Div([
                         dbc.Label("T0 Mínimo"),
                         dbc.Input(id="input-t0-minimo", type="number", placeholder="T0 Mínimo"),
@@ -70,10 +66,9 @@ layout_configuracoes = dbc.Card([
                     ], className="mb-3"),
                 ])
             ], md=6),
-        ]),
-        dbc.Row([
             dbc.Col([
                 dbc.Form([
+
                     html.Div([
                         dbc.Label("T2 Mínimo"),
                         dbc.Input(id="input-t2-minimo", type="number", placeholder="T2 Mínimo"),
@@ -82,10 +77,6 @@ layout_configuracoes = dbc.Card([
                         dbc.Label("T2 Máximo"),
                         dbc.Input(id="input-t2-maximo", type="number", placeholder="T2 Máximo"),
                     ], className="mb-3"),
-                ])
-            ], md=6),
-            dbc.Col([
-                dbc.Form([
                     html.Div([
                         dbc.Label("T3 Mínimo"),
                         dbc.Input(id="input-t3-minimo", type="number", placeholder="T3 Mínimo"),
@@ -94,6 +85,41 @@ layout_configuracoes = dbc.Card([
                         dbc.Label("T3 Máximo"),
                         dbc.Input(id="input-t3-maximo", type="number", placeholder="T3 Máximo"),
                     ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("Muda SP"),
+                        dcc.Dropdown(
+                            id="input-muda-sp",
+                            options=[
+                                {'label': 'True', 'value': True},
+                                {'label': 'False', 'value': False}
+                            ],
+                            value=True,  # valor padrão
+                        )
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("Tempo para Fim"),
+                        dbc.Input(id="input-tempo-para-fim", type="number", placeholder="Tempo para Fim"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("Quanto"),
+                        dbc.Input(id="input-quanto", type="number", placeholder="Quanto"),
+                    ], className="mb-3"),
+                    html.Div([
+                        dbc.Label("Patamar"),
+                        dbc.Input(id="input-patamar", type="number", placeholder="Patamar"),
+                    ], className="mb-3"),
+                ])
+            ], md=6),
+        ]),
+        dbc.Row([
+            dbc.Col([
+                dbc.Form([
+
+                ])
+            ], md=6),
+            dbc.Col([
+                dbc.Form([
+
                 ])
             ], md=6),
         ]),
@@ -101,8 +127,18 @@ layout_configuracoes = dbc.Card([
         html.Div([
             dbc.Button("Aplicar", id="btn-aplicar", color="primary", className="mr-1"),
             dbc.Button("Rodar", id="btn-rodar", color="success", className="mr-1"),
-        ], className="mb-3")
+        ], className="mb-3"),
+        # Botão Arduino
+        html.Div([
+            dbc.Button("Arduino", id="btn-arduino", color="info", className="mr-1"),
+        ], className="mb-3"),
     ])
+])
+
+# layout para exibir o conteúdo do arquivo Arduino
+layout_arduino = dbc.Card([
+    dbc.CardHeader("Arquivo Arduino".upper()),
+    dbc.CardBody(id='arduino-div')
 ])
 
 # Layout - organiza os cards na página
@@ -124,6 +160,10 @@ layout = dbc.Container([
         # adicionar uma nova coluna com o formulário
         dbc.Col(layout_configuracoes, md=12),
     ]),
+    dbc.Row([
+        # adicionando o card para exibir o conteúdo do arquivo Arduino
+        dbc.Col(layout_arduino, md=12)
+    ]),
     dcc.Store(id='data-store') # Adicionando dcc.Store para armazenar dados
 ], fluid=True)
 
@@ -142,9 +182,13 @@ layout = dbc.Container([
      State('input-t2-minimo', 'value'),
      State('input-t2-maximo', 'value'),
      State('input-t3-minimo', 'value'),
-     State('input-t3-maximo', 'value')]
+     State('input-t3-maximo', 'value'),
+     State('input-muda-sp', 'value'),
+     State('input-tempo-para-fim', 'value'),
+     State('input-quanto', 'value'),
+     State('input-patamar', 'value')]
 )
-def apply_settings(n_clicks, p0_inicial, p1_inicial, p2_inicial, p3_inicial, t0_min, t0_max, t1_min, t1_max, t2_min, t2_max, t3_min, t3_max):
+def apply_settings(n_clicks, p0_inicial, p1_inicial, p2_inicial, p3_inicial, t0_min, t0_max, t1_min, t1_max, t2_min, t2_max, t3_min, t3_max, muda_sp, tempo_para_fim, quanto, patamar):
     if n_clicks is not None:
         # Definindo o nome do arquivo
         filename = "informacoes.txt"
@@ -163,12 +207,15 @@ def apply_settings(n_clicks, p0_inicial, p1_inicial, p2_inicial, p3_inicial, t0_
             file.write(f"T2 Máximo: {t2_max}\n")
             file.write(f"T3 Mínimo: {t3_min}\n")
             file.write(f"T3 Máximo: {t3_max}\n")
+            file.write(f"Muda SP: {muda_sp}\n")
+            file.write(f"TempoParaFim: {tempo_para_fim}\n")
+            file.write(f"Quanto: {quanto}\n")
+            file.write(f"Patamar: {patamar}\n")
 
     return {}
 
 
 # Callback para o botão "Rodar"
-
 @callback(
     Output('grafico_atualizado', 'figure'),  # Aqui você precisa atualizar o ID do gráfico
     [Input('btn-rodar', 'n_clicks')],
@@ -185,6 +232,37 @@ def run_simulation(n_clicks, stored_data):
     # Retorne None para indicar que não há atualização no gráfico
     return None
 
+
+# Callback para abrir o arquivo Arduino
+# Callback para abrir a pasta do arquivo Arduino
+@callback(
+    Output('arduino-div', 'children'),
+    [Input('btn-arduino', 'n_clicks')]
+)
+def open_arduino_folder(n_clicks):
+    if n_clicks is not None:
+        try:
+            # Construir o caminho absoluto para a pasta onde o arquivo Arduino está localizado
+            arduino_folder_path = "C:\\Users\\usuario\\Documents\\projeto multivasos"
+            # Abrir a pasta no explorador de arquivos padrão
+            subprocess.Popen(['explorer', arduino_folder_path], shell=True)
+        except Exception as e:
+            print("Erro ao abrir a pasta do arquivo Arduino:", e)
+
+    return None
+
+
+def open_arduino_file(n_clicks):
+    if n_clicks is not None:
+        try:
+            # Construir o caminho absoluto para o arquivo Arduino
+            arduino_file_path = "C:\\Users\\usuario\\Documents\\projeto multivasos\\CodigoGeral_19-12-23.ino"
+            # Abrir o arquivo Arduino com o programa padrão associado ao tipo de arquivo
+            os.startfile(arduino_file_path)
+        except Exception as e:
+            print("Erro ao abrir o arquivo Arduino:", e)
+
+    return None
 
 
 # Criando a aplicação Dash

@@ -1,12 +1,16 @@
-P0 Inicial: 525
-P1 Inicial: 55
-P2 Inicial: None
-P3 Inicial: None
-T0 Mínimo: None
-T0 Máximo: None
-T1 Mínimo: None
-T1 Máximo: None
-T2 Mínimo: None
-T2 Máximo: None
-T3 Mínimo: None
-T3 Máximo: None
+P0 Inicial: 445
+P1 Inicial: 454
+P2 Inicial: 4545
+P3 Inicial: 54
+T0 Mínimo: 454
+T0 Máximo: 4545
+T1 Mínimo: 45
+T1 Máximo: 77
+T2 Mínimo: 7
+T2 Máximo: 7
+T3 Mínimo: 77
+T3 Máximo: 77
+Muda SP: True
+TempoParaFim: 152
+Quanto: 3
+Patamar: 445

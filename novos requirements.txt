@@ -1,0 +1,5 @@
+novos requirements:
+
+pip install pyserial
+pip install matplotlib
+pip install ipython

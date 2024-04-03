@@ -14,16 +14,11 @@ from IPython.display import display, clear_output #utilizado para atualização 
 #import mtxlab
 import warnings
 warnings.filterwarnings('ignore')
-%matplotlib inline
+#%matplotlib inline
 
 # Importe o objeto app da sua aplicação Dash
 from app import app
 
-# Acesse o armazenamento de dados da sua aplicação Dash
-data_store = app.layout['data-store']
-
-# Recupere os valores armazenados
-valores = data_store.data
 
 with open('informacoes.txt', 'r') as arquivo:
     linhas = arquivo.readlines()
@@ -71,10 +66,10 @@ patamar = valores_arquivo['Patamar'] #Tempo para desligar o sistema após atingi
 
 
 
-t0_sp = (int(t0max) + int(t0min))/2
-t1_sp = (int(t1max) + int(t1min))/2
-t2_sp = (int(t2max) + int(t2min))/2
-t3_sp = (int(t3max) + int(t3min))/2
+t0_sp = (int(t0_max) + int(t0_min))/2
+t1_sp = (int(t1_max) + int(t1_min))/2
+t2_sp = (int(t2_max) + int(t2_min))/2
+t3_sp = (int(t3_max) + int(t3_min))/2
 
 
 primeiravez0 = False
@@ -93,7 +88,10 @@ message=''#Mensagem inicial que corresponde ao que o arduino já mandou para o J
 
 with open("nomes.txt", "r") as nomes:
     nomeanterior = str(nomes.read())
-    nome = str(int(nomeanterior) + 1)
+    if nomeanterior:
+        nome = str(int(nomeanterior) + 1)
+    else:
+        nome = "1"
 
 with open("nomes.txt", "w") as nomes:
     nomes.write(nome)
@@ -229,16 +227,16 @@ def leitura():
 
 
     if(len(messagepesos.split())>8):#message.split é a mensagem separada a cada espaço, assim se separa palavra por palavra
-        p0= (float(messagepesos.split()[1+tamanhomensagemsplit])*1000) + p0inicial
+        p0= (float(messagepesos.split()[1+tamanhomensagemsplit])*1000) + p0_inicial
         print(messagepesos.split()[0+tamanhomensagemsplit],"%.0f"%p0)
         P0[medidas]=float(p0)
-        p1= (float(messagepesos.split()[3+tamanhomensagemsplit])*1000) + p1inicial
+        p1= (float(messagepesos.split()[3+tamanhomensagemsplit])*1000) + p1_inicial
         print(messagepesos.split()[2+tamanhomensagemsplit],"%.0f"%p1)
         P1[medidas]=float(p1)
-        p2= (float(messagepesos.split()[5+tamanhomensagemsplit])*1000) + p2inicial
+        p2= (float(messagepesos.split()[5+tamanhomensagemsplit])*1000) + p2_inicial
         print(messagepesos.split()[4+tamanhomensagemsplit],"%.0f"%p2)
         P2[medidas]=float(p2)
-        p3= (float(messagepesos.split()[7+tamanhomensagemsplit])*1000) + p3inicial
+        p3= (float(messagepesos.split()[7+tamanhomensagemsplit])*1000) + p3_inicial
         print(messagepesos.split()[6+tamanhomensagemsplit],"%.0f"%p3)
         P3[medidas]=float(p3)
         mensagemusadapesos=np.delete(messagepesos.split(),8)#mensagem em forma de matriz
@@ -295,11 +293,11 @@ def leitura():
             if (i==Temperatura3):
                 dT3=1
 
-        if ((T0[medidas - 1] > int(t0min)) or (primeiravez0)) and (Tempo_final > tempo) and (medidas % 2 == 0):
+        if ((T0[medidas - 1] > int(t0_min)) or (primeiravez0)) and (Tempo_final > tempo) and (medidas % 2 == 0):
             primeiravez0 = True
             if tb1 <= tempo:
                 vazaobomba("B1",0)
-            if ((T1[medidas - 1] > int(t1min)) or (primeiravez1)) and (tb1 > tempo):
+            if ((T1[medidas - 1] > int(t1_min)) or (primeiravez1)) and (tb1 > tempo):
                 if not primeiravez1:
                     vazaobomba("B1",80)
                     primeiravez1 = True

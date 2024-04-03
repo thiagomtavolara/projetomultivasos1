@@ -1,7 +1,5 @@
-import matplotlib
 import plotly.express as px
 import plotly.graph_objects as go
-from jedi.api.refactoring import inline
 from plotly.subplots import make_subplots
 import csv
 import sys
@@ -16,7 +14,7 @@ from IPython.display import display, clear_output #utilizado para atualização 
 #import mtxlab
 import warnings
 warnings.filterwarnings('ignore')
-#%matplotlib inline
+%matplotlib inline
 
 # Importe o objeto app da sua aplicação Dash
 from app import app
@@ -58,24 +56,16 @@ t3_min = valores_arquivo['T3 Mínimo']
 t3_max = valores_arquivo['T3 Máximo']
 
 
-#p0inicial = 1324
-#p1inicial = 295
-#p2inicial = 201
-#p3inicial = 0
 
-#t0min, t0max = "80-126".split("-") #t0min é a temperatura que da inicio ao funcionamento do controle
-#t1min, t1max = "90-94".split("-")
-#t2min, t2max = "80-90".split("-")
-#t3min, t3max = "76-80".split("-")
-
-t0_sp = (int(t0_max) + int(t0_min))/2
-t1_sp = (int(t1_max) + int(t1_min))/2
-t2_sp = (int(t2_max) + int(t2_min))/2
-t3_sp = (int(t3_max) + int(t3_min))/2
+t0_sp = (int(t0max) + int(t0min))/2
+t1_sp = (int(t1max) + int(t1min))/2
+t2_sp = (int(t2max) + int(t2min))/2
+t3_sp = (int(t3max) + int(t3min))/2
 
 muda_sp = True  #Se "=True" a função de mudar o set-point estará ativada, para desativar "=False"
 quanto = 5  #Quantos graus vão ser alterados do set-point inicial, para diminuir basta utilizar valor negativo
-patamar = 240  #Quantas medidas devem ser feitas até eu aumentar o set-point
+patamar = 180  #Quantas medidas devem ser feitas até eu aumentar o set-point
+tempoparafim = 1800 #Tempo para desligar o sistema após atingir T3 set-point
 
 primeiravez0 = False
 primeiravez1 = False
@@ -129,6 +119,19 @@ T1_sp = t1_sp*np.ones_like(listatempo)
 T2_sp = t2_sp*np.ones_like(listatempo)
 T3_sp = t3_sp*np.ones_like(listatempo)
 
+# variáveis auxiliares usadas nos controladore T0
+I_int1    = 0.0  # para malha 1
+D_int1    = 0.0
+# variáveis auxiliares usadas nos controladore T1
+I_int2    = 0.0  # para malha 1
+D_int2    = 0.0
+# variáveis auxiliares usadas nos controladore T2
+I_int3    = 0.0  # para malha 1
+D_int3    = 0.0
+# variáveis auxiliares usadas nos controladore T3
+I_int4    = 0.0  # para malha 1
+D_int4    = 0.0
+
 tempo = 0
 Peso0='Peso0:'#Quando aparecer isso a mensagem seguinte (após um espaço) é o valor de P0 naquele tempo.
 Peso1='Peso1:'#Quando aparecer isso a mensagem seguinte (após um espaço) é o valor de P1 naquele tempo.
@@ -159,6 +162,7 @@ print("Experimento:", nome)
 def leitura():
     global t3_sp
     global Tempo_final
+    global tempoparafim
     global medidas
     global primeiravez0
     global primeiravez1
@@ -215,16 +219,16 @@ def leitura():
 
 
     if(len(messagepesos.split())>8):#message.split é a mensagem separada a cada espaço, assim se separa palavra por palavra
-        p0= (float(messagepesos.split()[1+tamanhomensagemsplit])*1000) + p0_inicial
+        p0= (float(messagepesos.split()[1+tamanhomensagemsplit])*1000) + p0inicial
         print(messagepesos.split()[0+tamanhomensagemsplit],"%.0f"%p0)
         P0[medidas]=float(p0)
-        p1= (float(messagepesos.split()[3+tamanhomensagemsplit])*1000) + p1_inicial
+        p1= (float(messagepesos.split()[3+tamanhomensagemsplit])*1000) + p1inicial
         print(messagepesos.split()[2+tamanhomensagemsplit],"%.0f"%p1)
         P1[medidas]=float(p1)
-        p2= (float(messagepesos.split()[5+tamanhomensagemsplit])*1000) + p2_inicial
+        p2= (float(messagepesos.split()[5+tamanhomensagemsplit])*1000) + p2inicial
         print(messagepesos.split()[4+tamanhomensagemsplit],"%.0f"%p2)
         P2[medidas]=float(p2)
-        p3= (float(messagepesos.split()[7+tamanhomensagemsplit])*1000) + p3_inicial
+        p3= (float(messagepesos.split()[7+tamanhomensagemsplit])*1000) + p3inicial
         print(messagepesos.split()[6+tamanhomensagemsplit],"%.0f"%p3)
         P3[medidas]=float(p3)
         mensagemusadapesos=np.delete(messagepesos.split(),8)#mensagem em forma de matriz
@@ -281,21 +285,21 @@ def leitura():
             if (i==Temperatura3):
                 dT3=1
 
-        if ((T0[medidas - 1] > int(t0_min)) or (primeiravez0)) and (Tempo_final > tempo) and (medidas % 2 == 0):
+        if ((T0[medidas - 1] > int(t0min)) or (primeiravez0)) and (Tempo_final > tempo) and (medidas % 2 == 0):
             primeiravez0 = True
-            if tb1 < tempo:
+            if tb1 <= tempo:
                 vazaobomba("B1",0)
-            if ((T1[medidas - 1] > t1_sp) or (primeiravez1)) and (tb1 > tempo):
+            if ((T1[medidas - 1] > int(t1min)) or (primeiravez1)) and (tb1 > tempo):
                 if not primeiravez1:
                     vazaobomba("B1",80)
                     primeiravez1 = True
-                if tb2 < tempo:
+                if tb2 <= tempo:
                     vazaobomba("B2",0)
                 if ((T2[medidas - 1] > t2_sp) or (primeiravez2)) and (tb2 > tempo):
                     if not primeiravez2:
-                        vazaobomba("B2",80)
+                        vazaobomba("B2",65)
                         primeiravez2 = True
-                    if tb3 < tempo:
+                    if tb3 <= tempo:
                         vazaobomba("B3",0)
                     if ((T3[medidas - 1] > t3_sp) or (primeiravez3)) and (tb3 > tempo):
                         if not primeiravez3:
@@ -308,14 +312,14 @@ def leitura():
                                 T3_sp[patamar:] = t3_sp + quanto
                                 novoprimeiravez = False
                             else:
-                                Tempo_final = tempo + 1800
+                                Tempo_final = tempo + tempoparafim
                                 tb3 = Tempo_final - 600
                                 tb2 = tb3 + 250
                                 tb1 = tb2 + 250
 
                             primeiravez3 = True
                         elif (not novoprimeiravez) and (T3[medidas - 1] > t3_sp) and (medidas >= patamar):
-                            Tempo_final = tempo + 3000
+                            Tempo_final = tempo + tempoparafim
                             tb3 = Tempo_final - 600
                             tb2 = tb3 + 250
                             tb1 = tb2 + 250
@@ -394,13 +398,11 @@ def PWMRELE(comando,valor):
     if (PWM<0):
         PWM=0
 
-
 # Zero_Orded (ZOH) input signal
 def ZOH(t,u):
     tt=np.vstack((t,t)).T.reshape((1,len(t)*2))[0,1:]
     uu=np.vstack((u,u)).T.reshape((1,len(u)*2))[0,0:-1]
     return ((tt,uu))
-
 
 def PID_p2(SP, PV,k,I_int,D_int, dt, Method = 'Backward', Kp=10.0, Ti=50.0, Td=1.0, b=1.,c=0.0,
            N=10., U_bias = 0., Umin = -100.,Umax = 100.):
@@ -460,7 +462,6 @@ def PID_p2(SP, PV,k,I_int,D_int, dt, Method = 'Backward', Kp=10.0, Ti=50.0, Td=1
     # return the controller output and PID terms
     return np.array([Uop,I_int+II,D])
 
-
 def controlador(P0, P1, P2, P3, T0, T1, T2, T3):
     global pwmrele
     global primeiravezpwm
@@ -473,23 +474,17 @@ def controlador(P0, P1, P2, P3, T0, T1, T2, T3):
     global J4
     global i
     global medidas
+    global I_int1
+    global D_int1
+    global I_int2
+    global D_int2
+    global I_int3
+    global D_int3
+    global I_int4
+    global D_int4
 
     i = medidas - 1
-    # variáveis auxiliares usadas nos controladore T0
-    I_int1    = 0.0  # para malha 1
-    D_int1    = 0.0
 
-    # variáveis auxiliares usadas nos controladore T1
-    I_int2    = 0.0  # para malha 1
-    D_int2    = 0.0
-
-    # variáveis auxiliares usadas nos controladore T2
-    I_int3    = 0.0  # para malha 1
-    D_int3    = 0.0
-
-    # variáveis auxiliares usadas nos controladore T3
-    I_int4    = 0.0  # para malha 1
-    D_int4    = 0.0
     # Leitura das medições
 
     # Ajuste do controlador Kp=20, Ti=50

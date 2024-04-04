@@ -1,16 +1,16 @@
-P0 Inicial: 22
-P1 Inicial: 41
-P2 Inicial: 4242
-P3 Inicial: 242
-T0 Mínimo: 244
-T0 Máximo: 242
-T1 Mínimo: 39
-T1 Máximo: 42
-T2 Mínimo: 2442
-T2 Máximo: 424
-T3 Mínimo: 424
-T3 Máximo: 4242
+P0 Inicial: None
+P1 Inicial: None
+P2 Inicial: None
+P3 Inicial: None
+T0 Mínimo: None
+T0 Máximo: None
+T1 Mínimo: None
+T1 Máximo: 55
+T2 Mínimo: None
+T2 Máximo: None
+T3 Mínimo: None
+T3 Máximo: None
 Muda SP: True
-TempoParaFim: 4242
-Quanto: 42
-Patamar: 24
+TempoParaFim: None
+Quanto: None
+Patamar: None

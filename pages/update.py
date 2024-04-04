@@ -1,9 +1,9 @@
 import os
 import subprocess
 
+from dash import dcc, html, Input, Output, State, callback, MATCH, ALL
 import dash
 import dash_bootstrap_components as dbc
-from dash import dcc, html, callback, Input, Output, State
 
 # importa bibliotecas próprias
 from utils import graficos
@@ -143,6 +143,14 @@ layout_arduino = dbc.Card([
 
 # Layout - organiza os cards na página
 layout = dbc.Container([
+    # elemento responsável pela atualização do dash em tempo real
+    dcc.Interval(
+        id="trigger_classe",
+        disabled=False,
+        interval=1*1000,  # taxa de atualização em ms
+        n_intervals=0,
+    ),
+
     # adiciona uma linha
     dbc.Row([
         # adicionar uma nova coluna com o gráfico
@@ -156,6 +164,7 @@ layout = dbc.Container([
         # adicionando o card para exibir o conteúdo do arquivo Arduino
         dbc.Col(layout_arduino, md=12)
     ]),
+    dcc.Store(id='data-store') # Adicionando dcc.Store para armazenar dados
 ], fluid=True)
 
 # Callbacks para criar ou atualizar o arquivo .txt
@@ -209,9 +218,10 @@ def apply_settings(n_clicks, p0_inicial, p1_inicial, p2_inicial, p3_inicial, t0_
 # Callback para o botão "Rodar"
 @callback(
     Output('grafico_atualizado', 'figure'),  # Aqui você precisa atualizar o ID do gráfico
-    [Input('btn-rodar', 'n_clicks')]
+    [Input('btn-rodar', 'n_clicks')],
+    [State('data-store', 'data')]
 )
-def run_simulation(n_clicks):
+def run_simulation(n_clicks, stored_data):
     if n_clicks is not None:
         try:
             # Executar o programa planta.py usando subprocess
@@ -236,22 +246,21 @@ def open_arduino_folder(n_clicks):
             arduino_folder_path = "C:\\Users\\usuario\\Documents\\projeto multivasos"
             # Abrir a pasta no explorador de arquivos padrão
             subprocess.Popen(['explorer', arduino_folder_path], shell=True)
-            # Abrir o arquivo Arduino
-            open_arduino_file()
         except Exception as e:
             print("Erro ao abrir a pasta do arquivo Arduino:", e)
 
     return None
 
 
-def open_arduino_file():
-    try:
-        # Construir o caminho absoluto para o arquivo Arduino
-        arduino_file_path = "C:\\Users\\usuario\\Documents\\projeto multivasos\\CodigoGeral_19-12-23\\CodigoGeral_19-12-23.ino"
-        # Abrir o arquivo Arduino com o programa padrão associado ao tipo de arquivo
-        os.startfile(arduino_file_path)
-    except Exception as e:
-        print("Erro ao abrir o arquivo Arduino:", e)
+def open_arduino_file(n_clicks):
+    if n_clicks is not None:
+        try:
+            # Construir o caminho absoluto para o arquivo Arduino
+            arduino_file_path = "C:\\Users\\usuario\\Documents\\projeto multivasos\\CodigoGeral_19-12-23.ino"
+            # Abrir o arquivo Arduino com o programa padrão associado ao tipo de arquivo
+            os.startfile(arduino_file_path)
+        except Exception as e:
+            print("Erro ao abrir o arquivo Arduino:", e)
 
     return None
 

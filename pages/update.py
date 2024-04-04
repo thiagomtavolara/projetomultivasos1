@@ -235,6 +235,8 @@ def run_simulation(n_clicks, stored_data):
 
 # Callback para abrir o arquivo Arduino
 # Callback para abrir a pasta do arquivo Arduino
+# Callback para abrir o arquivo Arduino
+# Callback para abrir a pasta do arquivo Arduino
 @callback(
     Output('arduino-div', 'children'),
     [Input('btn-arduino', 'n_clicks')]
@@ -246,21 +248,22 @@ def open_arduino_folder(n_clicks):
             arduino_folder_path = "C:\\Users\\usuario\\Documents\\projeto multivasos"
             # Abrir a pasta no explorador de arquivos padrão
             subprocess.Popen(['explorer', arduino_folder_path], shell=True)
+            # Abrir o arquivo Arduino
+            open_arduino_file()
         except Exception as e:
             print("Erro ao abrir a pasta do arquivo Arduino:", e)
 
     return None
 
 
-def open_arduino_file(n_clicks):
-    if n_clicks is not None:
-        try:
-            # Construir o caminho absoluto para o arquivo Arduino
-            arduino_file_path = "C:\\Users\\usuario\\Documents\\projeto multivasos\\CodigoGeral_19-12-23.ino"
-            # Abrir o arquivo Arduino com o programa padrão associado ao tipo de arquivo
-            os.startfile(arduino_file_path)
-        except Exception as e:
-            print("Erro ao abrir o arquivo Arduino:", e)
+def open_arduino_file():
+    try:
+        # Construir o caminho absoluto para o arquivo Arduino
+        arduino_file_path = "C:\\Users\\usuario\\Documents\\projeto multivasos\\CodigoGeral_19-12-23\\CodigoGeral_19-12-23.ino"
+        # Abrir o arquivo Arduino com o programa padrão associado ao tipo de arquivo
+        os.startfile(arduino_file_path)
+    except Exception as e:
+        print("Erro ao abrir o arquivo Arduino:", e)
 
     return None
 

@@ -1,16 +1,16 @@
-P0 Inicial: 22
-P1 Inicial: 44
-P2 Inicial: 44
-P3 Inicial: 22
-T0 Mínimo: 44
-T0 Máximo: 77
-T1 Mínimo: 44
-T1 Máximo: 44
-T2 Mínimo: 4
-T2 Máximo: 4
-T3 Mínimo: 4
-T3 Máximo: 4
+P0 Inicial: 55
+P1 Inicial: 55
+P2 Inicial: 55
+P3 Inicial: 55
+T0 Mínimo: 55
+T0 Máximo: 55
+T1 Mínimo: 55
+T1 Máximo: 55
+T2 Mínimo: 55
+T2 Máximo: 55
+T3 Mínimo: 55
+T3 Máximo: 55
 Muda SP: True
-TempoParaFim: 4
-Quanto: 4
-Patamar: 4
+TempoParaFim: 55
+Quanto: 55
+Patamar: 55
